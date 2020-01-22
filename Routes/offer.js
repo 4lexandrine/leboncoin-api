@@ -3,10 +3,12 @@ const express = require("express");
 const router = express.Router();
 const isAuthenticated = require("../Middleware/isAuthenticated");
 
-// import du modèle User
+// import du modèle Offer
 const Offer = require("../Models/Offer");
 
+// Création d'une route pour publier des offres SI l'utilisateur est authentifier !
 router.post("/offer/publish", isAuthenticated, async (req, res) => {
+  // isAuthenticated est la fonction qui permet de checker l'authentification
   try {
     console.log(req.userToken);
     const newOffer = new Offer({
