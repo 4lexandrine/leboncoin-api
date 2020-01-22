@@ -10,6 +10,8 @@ app.use(formidableMiddleware());
 // Création du lien avec le document /Routes/user
 const userRoutes = require("./Routes/user");
 app.use(userRoutes);
+const offerRoutes = require("./Routes/offer");
+app.use(offerRoutes);
 
 // Création de la bdd
 mongoose.connect("mongodb://localhost/leboncoin", {

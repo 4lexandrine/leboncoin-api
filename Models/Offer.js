@@ -3,15 +3,15 @@
 // Import de mongoose
 const mongoose = require("mongoose");
 
-const Announce = mongoose.model("Announce", {
+const Offer = mongoose.model("Offer", {
   title: String,
   description: String,
   price: Number,
-  created: String,
+  created: Date,
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"
   }
 });
 
-module.exports = Announce;
+module.exports = Offer;
