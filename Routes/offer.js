@@ -19,21 +19,29 @@ router.post("/offer/publish", isAuthenticated, async (req, res) => {
       creator: req.userToken
     });
 
-    await newOffer.save();
+    if (
+      req.fields.title.length <= 50 &&
+      req.fields.description.length <= 500 &&
+      req.fields.price <= 100000
+    ) {
+      await newOffer.save();
 
-    res.json({
-      _id: newOffer._id,
-      title: req.fields.title,
-      description: req.fields.description,
-      price: req.fields.price,
-      created: newOffer.created,
-      creator: {
-        account: {
-          username: req.userToken.account.username
-        },
-        _id: req.userToken._id
-      }
-    });
+      res.json({
+        _id: newOffer._id,
+        title: req.fields.title,
+        description: req.fields.description,
+        price: req.fields.price,
+        created: newOffer.created,
+        creator: {
+          account: {
+            username: req.userToken.account.username
+          },
+          _id: req.userToken._id
+        }
+      });
+    } else {
+      res.json({ message: "Error, too many characters" });
+    }
   } catch (error) {
     res.json({ error: error.message });
   }
