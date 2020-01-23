@@ -117,6 +117,8 @@ router.get("/offer/with-count", async (req, res) => {
   }
 });
 
+// test
+
 router.get("/offer/:id", async (req, res) => {
   try {
     const idSearch = await Offer.findById(req.params.id).populate("creator");
