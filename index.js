@@ -20,6 +20,10 @@ mongoose.connect("mongodb://localhost/leboncoin", {
   useCreateIndex: true
 });
 
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to Leboncoin API" });
+});
+
 app.all("*", () => {
   console.log("All routes");
 });
