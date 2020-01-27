@@ -15,7 +15,7 @@ router.post("/offer/publish", isAuthenticated, async (req, res) => {
       title: req.fields.title,
       description: req.fields.description,
       price: req.fields.price,
-      // created: Date.now, // pas nécéssaire vu qu'on a créé un default dans le modele /!\
+      // created: Date.now, // pas nécessaire vu qu'on a créé un default dans le modèle /!\
       creator: req.userToken
     };
 
@@ -73,7 +73,7 @@ router.get("/offer/with-count", async (req, res) => {
 
     const search = Offer.find(filteredResult).populate("creator"); // on construit le processus de recherche
 
-    // on construit les processsus de tri par prix et/ou date
+    // on construit les processus de tri par prix et/ou date
     if (req.query.sort === "price-asc") {
       search.sort({ price: 1 });
     } else if (req.query.sort === "price-desc") {
