@@ -1,6 +1,9 @@
 // import et initialisation des packages
 const express = require("express");
 const router = express.Router();
+const cors = require("cors");
+app.use(cors());
+
 
 const uid2 = require("uid2");
 const SHA256 = require("crypto-js/sha256");

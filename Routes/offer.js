@@ -21,9 +21,9 @@ router.post("/offer/publish", isAuthenticated, async (req, res) => {
   // isAuthenticated est la fonction qui permet de checker l'authentification
 
   try {
-    cloudinary.uploader.upload(req.files.picture.path, function(error, result) {
+    cloudinary.uploader.upload(req.files.picture.path, function (error, result) {
       console.log(result.secure_url);
-  
+
       res.json({
         url: result.secure_url
       });
@@ -34,7 +34,7 @@ router.post("/offer/publish", isAuthenticated, async (req, res) => {
       description: req.fields.description,
       price: req.fields.price,
       // created: Date.now, // pas nécessaire vu qu'on a créé un default dans le modèle /!\
-      picture: req.files.picture,
+      picture: req.files.picture[0],
       creator: req.userToken
     };
 
