@@ -10,6 +10,9 @@ const Offer = mongoose.model("Offer", {
     maxLength: 50,
     require: true
   },
+  picture: {
+    type: String
+  },
   description: {
     type: String,
     minLength: 1,
