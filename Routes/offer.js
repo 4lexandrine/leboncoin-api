@@ -114,7 +114,7 @@ router.get("/offer/with-count", async (req, res) => {
 
     const results = await search;
     // console.log(results);
-    let tab = [];
+    let offers = [];
     results.forEach(result => {
       let newResult = {};
       newResult._id = result._id;
@@ -125,12 +125,12 @@ router.get("/offer/with-count", async (req, res) => {
       newResult.phone = result.creator.account.phone;
       newResult.date = result.created;
       newResult.creator_id = result.creator._id;
-      tab.push(newResult);
+      offers.push(newResult);
     });
     let count = results.length;
-    // console.log(tab);
+    // console.log(offers);
 
-    res.json({ count: count, tab });
+    res.json({ count: count, offers });
   } catch (error) {
     res.json({ error: error.message });
   }
