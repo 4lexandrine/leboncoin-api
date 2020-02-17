@@ -118,6 +118,7 @@ router.get("/offer/with-count", async (req, res) => {
       let newResult = {};
       newResult._id = result._id;
       newResult.title = result.title;
+      newResult.picture = result.picture;
       newResult.description = result.description;
       newResult.price = result.price;
       newResult.username = result.creator.account.username;
