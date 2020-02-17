@@ -2,7 +2,6 @@
 const express = require("express");
 const router = express.Router();
 const isAuthenticated = require("../Middleware/isAuthenticated");
-const cors = require("cors");
 const cloudinary = require("cloudinary").v2;
 
 
@@ -43,7 +42,7 @@ router.post("/offer/publish", isAuthenticated, async (req, res) => {
         description: newOffer.description,
         price: newOffer.price,
         created: newOffer.created,
-        picture: newOffer.picture,
+        picture: result.secure_url,
         creator: {
           account: {
             username: newOffer.creator.account.username // ou  req.userToken.account.username
