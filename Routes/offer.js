@@ -25,42 +25,40 @@ router.post("/offer/publish", isAuthenticated, async (req, res) => {
 
     cloudinary.uploader.upload(req.files.picture.path, function (error, result) {
       console.log(result.secure_url);
+      const obj = {
+        title: req.fields.title,
+        description: req.fields.description,
+        price: req.fields.price,
+        // created: Date.now, // pas nécessaire vu qu'on a créé un default dans le modèle /!\
+        picture: result.secure_url,
+        creator: req.userToken
+      };
+
+      // if ( req.fields.title.length <= 50 && req.fields.description.length <= 500 && req.fields.price <= 100000) {
+      // updaté dans le modèle Offer !!!!!!!
+      const newOffer = new Offer(obj);
+
+      await newOffer.save();
 
       res.json({
-        url: result.secure_url
+        _id: newOffer._id,
+        title: newOffer.title,
+        description: newOffer.description,
+        price: newOffer.price,
+        created: newOffer.created,
+        picture: result.secure_url,
+
+        creator: {
+          account: {
+            username: newOffer.creator.account.username // ou  req.userToken.account.username
+          },
+          _id: newOffer.creator._id // ou  req.userToken._id
+        }
       });
+
     });
     // console.log(req.userToken);
-    const obj = {
-      title: req.fields.title,
-      description: req.fields.description,
-      price: req.fields.price,
-      // created: Date.now, // pas nécessaire vu qu'on a créé un default dans le modèle /!\
-      picture: req.files.picture[0],
-      creator: req.userToken
-    };
 
-    // if ( req.fields.title.length <= 50 && req.fields.description.length <= 500 && req.fields.price <= 100000) {
-    // updaté dans le modèle Offer !!!!!!!
-    const newOffer = new Offer(obj);
-
-    await newOffer.save();
-
-    res.json({
-      _id: newOffer._id,
-      title: newOffer.title,
-      description: newOffer.description,
-      price: newOffer.price,
-      created: newOffer.created,
-      picture: req.files.picture[0],
-
-      creator: {
-        account: {
-          username: newOffer.creator.account.username // ou  req.userToken.account.username
-        },
-        _id: newOffer.creator._id // ou  req.userToken._id
-      }
-    });
     // } else {
     //   res.json({ message: "Error, too many characters" });
     // }
