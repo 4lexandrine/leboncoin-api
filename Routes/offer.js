@@ -44,7 +44,7 @@ router.post("/offer/publish", isAuthenticated, async (req, res) => {
         description: newOffer.description,
         price: newOffer.price,
         created: newOffer.created,
-        picture: newOffer.picture,
+        picture: result.secure_url,
 
         creator: {
           account: {
