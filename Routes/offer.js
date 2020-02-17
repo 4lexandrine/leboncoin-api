@@ -23,7 +23,7 @@ router.post("/offer/publish", isAuthenticated, async (req, res) => {
   try {
     // console.log(req.files.picture.path);
 
-    cloudinary.uploader.upload(req.files.picture.path, function (error, result) {
+    cloudinary.uploader.upload(req.files.picture.path, async function (error, result) {
       console.log(result.secure_url);
       const obj = {
         title: req.fields.title,
