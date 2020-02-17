@@ -4,8 +4,7 @@ const router = express.Router();
 const isAuthenticated = require("../Middleware/isAuthenticated");
 const cors = require("cors");
 const cloudinary = require("cloudinary").v2;
-const app = express();
-app.use(cors());
+
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -44,7 +43,7 @@ router.post("/offer/publish", isAuthenticated, async (req, res) => {
         description: newOffer.description,
         price: newOffer.price,
         created: newOffer.created,
-        picture: newOffer.picture,
+        picture: result.secure_url,
 
         creator: {
           account: {
