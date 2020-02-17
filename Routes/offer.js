@@ -19,11 +19,9 @@ const Offer = require("../Models/Offer");
 // Création d'une route pour publier des offres SI l'utilisateur est authentifié !
 router.post("/offer/publish", isAuthenticated, async (req, res) => {
   // isAuthenticated est la fonction qui permet de checker l'authentification
-
   try {
     // console.log(req.files.picture.path);
-
-    cloudinary.uploader.upload(req.files.picture.path, async function (error, result) {
+    cloudinary.uploader.upload(req.files.picture.path, async (error, result) => {
       console.log(result.secure_url);
       const obj = {
         title: req.fields.title,
@@ -46,7 +44,7 @@ router.post("/offer/publish", isAuthenticated, async (req, res) => {
         description: newOffer.description,
         price: newOffer.price,
         created: newOffer.created,
-        picture: result.secure_url,
+        picture: newOffer.picture,
 
         creator: {
           account: {
