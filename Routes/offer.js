@@ -2,6 +2,16 @@
 const express = require("express");
 const router = express.Router();
 const isAuthenticated = require("../Middleware/isAuthenticated");
+const cors = require("cors");
+const cloudinary = require("cloudinary").v2;
+
+app.use(cors());
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 // import du modèle Offer
 const Offer = require("../Models/Offer");
@@ -9,13 +19,22 @@ const Offer = require("../Models/Offer");
 // Création d'une route pour publier des offres SI l'utilisateur est authentifié !
 router.post("/offer/publish", isAuthenticated, async (req, res) => {
   // isAuthenticated est la fonction qui permet de checker l'authentification
+
   try {
+    cloudinary.uploader.upload(req.files.picture.path, function(error, result) {
+      console.log(result.secure_url);
+  
+      res.json({
+        url: result.secure_url
+      });
+    });
     // console.log(req.userToken);
     const obj = {
       title: req.fields.title,
       description: req.fields.description,
       price: req.fields.price,
       // created: Date.now, // pas nécessaire vu qu'on a créé un default dans le modèle /!\
+      picture: req.files.picture,
       creator: req.userToken
     };
 
@@ -89,7 +108,7 @@ router.get("/offer/with-count", async (req, res) => {
     if (req.query.page) {
       //
       const page = req.query.page;
-      const limit = 3;
+      const limit = 10;
       search.limit(limit).skip(limit * (page - 1));
     }
 

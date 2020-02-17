@@ -2,10 +2,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const formidableMiddleware = require("express-formidable");
+const cors = require("cors");
 
+require('dotenv').config();
 // initialisation
 const app = express();
 app.use(formidableMiddleware());
+app.use(cors());
+
 
 // Création du lien avec le document /Routes/user
 const userRoutes = require("./Routes/user");
@@ -14,7 +18,7 @@ const offerRoutes = require("./Routes/offer");
 app.use(offerRoutes);
 
 // Création de la bdd
-mongoose.connect("mongodb://localhost/leboncoin", {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true
@@ -28,6 +32,6 @@ app.all("*", () => {
   console.log("All routes");
 });
 
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT || 3200, () => {
   console.log("Server Started");
 });
