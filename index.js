@@ -7,7 +7,7 @@ const cors = require("cors");
 require('dotenv').config();
 // initialisation
 const app = express();
-app.use(formidableMiddleware());
+app.use(formidableMiddleware({ multiples: true }));
 app.use(cors());
 
 
