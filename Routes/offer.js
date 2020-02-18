@@ -1,12 +1,10 @@
 // import et initialisation des packages
 const express = require("express");
-const createStripe = require("stripe");
+const stripe = require("stripe")(process.env.SECRET_STRIPE_KEY);
 const router = express.Router();
 const isAuthenticated = require("../Middleware/isAuthenticated");
 const cloudinary = require("cloudinary").v2;
 
-
-const stripe = createSripe(process.env.SECRET_STRIPE_KEY);
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

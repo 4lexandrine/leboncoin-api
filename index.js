@@ -32,6 +32,6 @@ app.all("*", () => {
   console.log("All routes");
 });
 
-app.listen(process.env.PORT || 3200, () => {
+app.listen(process.env.PORT, () => {
   console.log("Server Started");
 });
