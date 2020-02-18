@@ -1,9 +1,12 @@
 // import et initialisation des packages
 const express = require("express");
+const createStripe = require("stripe");
 const router = express.Router();
 const isAuthenticated = require("../Middleware/isAuthenticated");
 const cloudinary = require("cloudinary").v2;
 
+
+const stripe = createSripe(process.env.SECRET_STRIPE_KEY);
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -142,5 +145,20 @@ router.get("/offer/:id", async (req, res) => {
     res.json({ error: error.message });
   }
 });
+
+router.post("/payment", async (req, res) => {
+  try {
+    let response = await stripe.charges.create({
+      amount: 1000,
+      currency: "eur",
+      description: "description",
+      source: req.fields.token
+    })
+    res.json({ response });
+  } catch (error) {
+    console.log(error);
+    res.status(500).end();
+  }
+})
 
 module.exports = router;
