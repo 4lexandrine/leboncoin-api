@@ -147,7 +147,7 @@ router.get("/offer/:id", async (req, res) => {
 router.post("/payment", async (req, res) => {
   try {
     let response = await stripe.charges.create({
-      amount: 1000,
+      amount: `${req.fields.price}00`,
       currency: "eur",
       description: "description",
       source: req.fields.token
