@@ -19,7 +19,6 @@ const Offer = require("../Models/Offer");
 router.post("/offer/publish", isAuthenticated, async (req, res) => {
   // isAuthenticated est la fonction qui permet de checker l'authentification
   try {
-    // console.log(req.files);
 
     cloudinary.uploader.upload(req.files.picture.path, async (error, result) => {
 
@@ -44,9 +43,9 @@ router.post("/offer/publish", isAuthenticated, async (req, res) => {
         picture: result.secure_url,
         creator: {
           account: {
-            username: newOffer.creator.account.username // ou  req.userToken.account.username
+            username: newOffer.creator.account.username
           },
-          _id: newOffer.creator._id // ou  req.userToken._id
+          _id: newOffer.creator._id
         }
       });
 
@@ -61,7 +60,7 @@ const filter = req => {
   const filters = {}; // => on veut retourner un objet à la fin
   if (req.query.priceMin) {
     // si il y a un prix min demandé
-    filters.price = {}; // je crée une clé price vide
+    filters.price = {}; // je crée une clé price 
     filters.price.$gte = req.query.priceMin; // => méthode mongo $gte (greater than or equal) { price : { $gte: 10 } }
   }
   if (req.query.priceMax) {
@@ -120,7 +119,6 @@ router.get("/offer/with-count", async (req, res) => {
       offers.push(newResult);
     });
     let count = results.length;
-    // console.log(offers);
 
     res.json({ count, offers });
   } catch (error) {
@@ -147,8 +145,7 @@ router.post("/payment", async (req, res) => {
     })
     res.json({ response });
   } catch (error) {
-    console.log(error);
-    res.status(500).end();
+    res.status(500).json({ error: error.message });
   }
 })
 

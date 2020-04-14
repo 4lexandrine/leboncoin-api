@@ -18,9 +18,7 @@ router.post("/user/sign_up", async (req, res) => {
     const salt = uid2(64); // chaine de 64 caracteres
     // console.log(salt);
     const hash = SHA256(req.fields.password + salt).toString(encBase64); // mélange du salt + password encrypté qui renvoie un tableau qu'on retransforme en chaîne de caractere (dans le modèle User hash doit être de type String)
-    // console.log(hash);
     const token = uid2(64); // chaîne de 64 caracteres (qui vva servir pour les cookies)
-    // console.log(token);
 
     // création d'un nouvel utilisateur
     const newUser = new User({
@@ -35,14 +33,7 @@ router.post("/user/sign_up", async (req, res) => {
     });
     const user = await User.findOne({ email: req.fields.email });
     if (!user) {
-      // remplacé dans le modèle par unique: true
-      // si cet utilisateur n'existe pas déjà, on le sauvegarde dans la bdd
-      // if (!newUser.username) {
-      // obligation de choisir un username
-      // res.json({ error: "You have to choose a username" });
-      // } else {
       await newUser.save();
-
       res.json({
         _id: newUser._id,
         token: newUser.token,
@@ -82,11 +73,11 @@ router.post("/user/log_in", async (req, res) => {
         res.status(401).json({ error: "Unauthorized" }); // si le mot de passe entré n'est pas le bon
       }
     } else {
-      res.status(400).json({ error: "User not found" }); // si le mail n'est pas trouvé dans la bdd
+      res.status(401).json({ error: "Unauthorized" }); // si le mail n'est pas trouvé dans la bdd
     }
   } catch (error) {
     res.json({ error: error.message });
   }
 });
 
-module.exports = router; // exporte le document
+module.exports = router; 
