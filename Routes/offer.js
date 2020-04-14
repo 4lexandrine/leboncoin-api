@@ -5,17 +5,14 @@ const router = express.Router();
 const isAuthenticated = require("../Middleware/isAuthenticated");
 const cloudinary = require("cloudinary").v2;
 
-
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// import du modèle Offer
 const Offer = require("../Models/Offer");
 
-// Création d'une route pour publier des offres SI l'utilisateur est authentifié !
 router.post("/offer/publish", isAuthenticated, async (req, res) => {
   // isAuthenticated est la fonction qui permet de checker l'authentification
   try {
@@ -56,12 +53,11 @@ router.post("/offer/publish", isAuthenticated, async (req, res) => {
 });
 
 // création de la fonction qui va gérer les filtres
-const filter = req => {
-  const filters = {}; // => on veut retourner un objet à la fin
+const createFilters = (req) => {
+  const filters = {};
   if (req.query.priceMin) {
-    // si il y a un prix min demandé
-    filters.price = {}; // je crée une clé price 
-    filters.price.$gte = req.query.priceMin; // => méthode mongo $gte (greater than or equal) { price : { $gte: 10 } }
+    filters.price = {};
+    filters.price.$gte = req.query.priceMin;
   }
   if (req.query.priceMax) {
     if (filters.price === undefined) {
@@ -69,69 +65,54 @@ const filter = req => {
     }
     filters.price.$lte = req.query.priceMax;
   }
+
   if (req.query.title) {
-    filters.title = new RegExp(req.query.title, "i"); // new RegExp permet de lancer une recherche de chaîne de caractère / "i" permet de rendre insensible à la casse
+    filters.title = new RegExp(req.query.title, "i");
   }
-  return filters; //on retourne les objets correspondant
+  return filters;
 };
 
 router.get("/offer/with-count", async (req, res) => {
   try {
-    const filteredResult = filter(req);
-    // console.log(filteredResult);
+    const totalOffers = await Offer.find();
+    let count = totalOffers.length;
 
-    const search = Offer.find(filteredResult).populate("creator"); // on construit le processus de recherche
+    const filters = createFilters(req);
+    const search = Offer.find(filters);
 
-    // on construit les processus de tri par prix et/ou date
     if (req.query.sort === "price-asc") {
       search.sort({ price: 1 });
     } else if (req.query.sort === "price-desc") {
       search.sort({ price: -1 });
     }
-
-    if (req.query.sort === "date-asc") {
-      search.sort({ date: 1 });
-    } else if (req.query.sort === "date-desc") {
-      search.sort({ date: -1 });
-    }
-
     if (req.query.page) {
-      //
       const page = req.query.page;
-      const limit = 10;
+      const limit = 5;
       search.limit(limit).skip(limit * (page - 1));
     }
-
-    const results = await search;
-    // console.log(results);
-    let offers = [];
-    results.forEach(result => {
-      let newResult = {};
-      newResult._id = result._id;
-      newResult.title = result.title;
-      newResult.picture = result.picture;
-      newResult.description = result.description;
-      newResult.price = result.price;
-      newResult.username = result.creator.account.username;
-      newResult.phone = result.creator.account.phone;
-      newResult.date = result.created;
-      newResult.creator_id = result.creator._id;
-      offers.push(newResult);
+    const offers = await search.populate({
+      path: "creator",
+      select: "account",
     });
-    let count = results.length;
 
-    res.json({ count, offers });
+    res.json({ count, offers: offers });
   } catch (error) {
-    res.json({ error: error.message });
+    res.json({ message: error.message });
   }
 });
 
 router.get("/offer/:id", async (req, res) => {
   try {
-    const idSearch = await Offer.findById(req.params.id).populate("creator");
-    res.json(idSearch);
+    const id = req.params.id;
+    const offer = await Offer.findById(id).populate({
+      path: "creator",
+      select: "account",
+    });
+    const userId = offer.creator._id;
+    const countOffers = await Offer.find({ creator: userId });
+    res.json({ offer: offer, count: countOffers.length });
   } catch (error) {
-    res.json({ error: error.message });
+    res.json({ message: error.message });
   }
 });
 
@@ -146,6 +127,15 @@ router.post("/payment", async (req, res) => {
     res.json({ response });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+})
+
+router.post("/search", async (req, res) => {
+  try {
+    const search = await Offer.find({ title: { $regex: req.fields.search, $options: 'i' } });
+    res.json({ search })
+  } catch (error) {
+    res.json({ message: error.message });
   }
 })
 

@@ -16,7 +16,6 @@ const User = require("../Models/User");
 router.post("/user/sign_up", async (req, res) => {
   try {
     const salt = uid2(64); // chaine de 64 caracteres
-    // console.log(salt);
     const hash = SHA256(req.fields.password + salt).toString(encBase64); // mélange du salt + password encrypté qui renvoie un tableau qu'on retransforme en chaîne de caractere (dans le modèle User hash doit être de type String)
     const token = uid2(64); // chaîne de 64 caracteres (qui vva servir pour les cookies)
 
