@@ -15,7 +15,6 @@ const offerRoutes = require("./Routes/offer");
 app.use(offerRoutes);
 
 
-// Création de la bdd
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
