@@ -4,6 +4,7 @@ const stripe = require("stripe")(process.env.SECRET_STRIPE_KEY);
 const router = express.Router();
 const isAuthenticated = require("../Middleware/isAuthenticated");
 const cloudinary = require("cloudinary").v2;
+const axios = require('axios');
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -124,7 +125,18 @@ router.post("/payment", async (req, res) => {
       description: req.fields.title,
       source: req.fields.token
     })
-    res.json({ response });
+
+    let token = req.fields.captchaToken;
+    let url = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_RECAPTCHA}&response=${token}`
+
+    const resp = await axios.post(url)
+    if (resp.data.success && resp.data.score > 0.5) {
+      console.log('yeah');
+      res.json({ response });
+    } else {
+      console.log('you are a robot');
+    }
+    console.log(resp.data);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
