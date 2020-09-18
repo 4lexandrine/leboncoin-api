@@ -12,6 +12,8 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
+let key = process.env.SECRET_RECAPTCHA;
+
 const Offer = require("../Models/Offer");
 
 router.post("/offer/publish", isAuthenticated, async (req, res) => {
@@ -127,7 +129,7 @@ router.post("/payment", async (req, res) => {
     })
 
     let token = req.fields.captchaToken;
-    let url = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_RECAPTCHA}&response=${token}`
+    let url = `https://www.google.com/recaptcha/api/siteverify?secret=${key}&response=${token}`
 
     const resp = await axios.post(url)
     if (resp.data.success && resp.data.score > 0.5) {
